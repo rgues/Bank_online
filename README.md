@@ -9,6 +9,6 @@ It's built Node Js
 # MySql Database
 We use Sequelize to manage ORM between Mysql and Node Js
 # Run application
-npm run dev is used to launch the application after the database has been created
+`npm run dev` is used to launch the application after the database has been created
 # User master
-There is a js file [createAccount.js](It's is use to create the user master)
+There is a js file [create master account](///client/createAccount.js)
