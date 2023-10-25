@@ -1,0 +1,11 @@
+node_modules
+client/node_modules
+client/createAccount.js
+client/package-lock.json
+cert.csr
+cert.pem
+.npmrc
+cert*
+package-lock.json
+ssh_key.pub
+
