@@ -1,9 +1,8 @@
 {
-  "name": "Online Bank",
+  "name": "Banco Connect",
   "version": "1.0.0",
   "private": true,
-  "homepage": ".",
-  "proxy":"http://localhost:3001",
+  "homepage": "https://onlinebancoconnect.com",
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "7.21.11",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",

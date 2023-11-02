@@ -60,6 +60,15 @@ const UpdateUser = ({dispatch,user}) => {
             valid:true,
             touched:false,
             validationMessage:''
+        },
+        canTransfer: { 
+            validation:{
+                required:true,
+                pattern:/^[0-1]{1}$/,
+            },
+            valid:true,
+            touched:false,
+            validationMessage:''
         }
     }
 
@@ -70,6 +79,7 @@ const UpdateUser = ({dispatch,user}) => {
     const [phone, setPhone] = useState('');
     const [role, setRole] = useState('');
     const [email, setEmail] = useState('');
+    const [canTransfer,setCanTransfer] = useState('');
     const [error, setError] = useState('');
     const [formValidation, setFormValidation] = useState(validation);
     const navigate = useNavigate();
@@ -84,6 +94,7 @@ const UpdateUser = ({dispatch,user}) => {
             setAddress(current_user[0].address);
             setEmail(current_user[0].email);
             setPhone(current_user[0].phone);
+            setCanTransfer(current_user[0].canTransfer);
         } 
     
         dispatch(getRoles());
@@ -177,7 +188,7 @@ const UpdateUser = ({dispatch,user}) => {
 
         if (formValid) {
             setError('');
-            dispatch(userUpdate({id, lastname, email,firstname, role, phone, address}, user.users && user.users.length > 0 ? user.users : []));
+            dispatch(userUpdate({id, lastname, email,firstname, role, phone, address,canTransfer}, user.users && user.users.length > 0 ? user.users : []));
         } else {
             setError('Form is invalid !');
         }
@@ -211,6 +222,18 @@ const UpdateUser = ({dispatch,user}) => {
                                 </div>
                                 : null
                         }
+                    </div>
+
+                    <div className={`form_element ${formValidation['canTransfer'].touched && !formValidation['canTransfer'].valid ? ' form_invalid' : ''}`}>
+                        <select value={canTransfer}
+                            onBlur={handleInputChange(setCanTransfer, 'canTransfer', true)}
+                            onChange={handleInputChange(setCanTransfer, 'canTransfer', false)} >
+                            <option key="0" value=''>Transfer to Account</option> 
+                            <option key="1" value="1">Yes, I can transfer</option>
+                            <option key="2" value="0">No, I can't transfer</option>
+                          
+                        </select>
+                        {formValidation['canTransfer'].touched ? showValidation(formValidation['canTransfer']) : null}
                     </div>
 
                 <div className={`form_element ${formValidation['firstname'].touched &&!formValidation['firstname'].valid  ? ' form_invalid' : ''}`}>

@@ -11,23 +11,36 @@ module.exports = function (app) {
 
    // 
    app.get('/api/auth',auth, (req, res) => {
-      res.json({
-         isAuth: true,
-         id: req.user.id,
-         email: req.user.email,
-         firstname: req.user.firstname,
-         lastname: req.user.lastname,
-         role: req.user.role
-      })
+
+      try {
+         res.json({
+            isAuth: true,
+            id: req.user.id,
+            email: req.user.email,
+            firstname: req.user.firstname,
+            lastname: req.user.lastname,
+            role: req.user.role,
+            canTransfer: req.user.canTransfer
+         })
+      } catch (err) {
+         console.log(err);
+         res.status(400).send(err);
+      }
+ 
    });
 
    app.get('/api/logout', auth, (req, res) => {
 
-      req.user.deleteToken(req.token, (err, user) => {
-         if (err) return res.status(400).send(err);
-         res.sendStatus(200);
-      })
+      try {
+         req.user.deleteToken(req.token, (err, user) => {
+            if (err) return res.status(400).send(err);
+            res.sendStatus(200);
+         })
 
+      } catch(err) {
+            console.log(err);
+            res.status(400).send(err);
+      }
    });
 
    // 

@@ -301,6 +301,15 @@ module.exports = function (app) {
             await transaction.save();
             await transaction.reload();
 
+            const wallet = await Wallet.findOne({ where: { 'userId': transaction.userId, 'transactionId': transaction.id } });
+
+            if (wallet && wallet.status === 'pending') {
+                wallet.set({
+                    archive: 1
+                });
+                await wallet.save();
+            }
+
             res.status(200).json({ success: true, transaction });
         } catch (err) {
             console.log(err);

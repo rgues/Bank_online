@@ -117,7 +117,7 @@ app.get('/api/user',auth, async(req,res) => {
        let id = req.query.id;
        const user = await User.findOne({where: {id:id}});
       if (user instanceof User) {
-           user.update({archive : 1});
+           user.update({archive : 1, active:0});
            await user.save();
            await user.reload();
         
@@ -148,6 +148,7 @@ app.post('/api/user/update',auth,admin,userFormUpdateValidator,async (req,res) =
                address:userData.address,
                role:userData.role,
                phone:userData.phone,
+               canTransfer:userData.canTransfer
             });
             await user.save();
             await user.reload();

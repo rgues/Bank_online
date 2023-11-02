@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom';
 import { faArrowDown, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const UserWallet = ({ wallet, dispatch }) => {
+const UserWallet = ({ wallet,user, dispatch }) => {
+
+   
 
     const [showModal, setSchowModal] = useState(false);
     const [account, setAccount] = useState('');
@@ -118,7 +120,8 @@ const UserWallet = ({ wallet, dispatch }) => {
     const openModal = (event) => {
         const wallets = wallet.myWallet.wallet;
         const checkBalance = wallets.some(item => item.balance > 0);
-        if (checkBalance) {
+        
+        if (checkBalance && user && user.login && user.login.canTransfer === 1) {
             setSchowModal(true);
         } else {
             alert('You aren\'t allow to use this service yet.');
@@ -239,7 +242,8 @@ const UserWallet = ({ wallet, dispatch }) => {
 };
 const mapStateToProps = (state) => {
     return {
-        wallet: state.wallet
+        wallet: state.wallet,
+        user: state.user
     }
 }
 

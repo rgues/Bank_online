@@ -64,6 +64,14 @@ a.btn-edit:visited {
     padding: .5rem;
 }
 
+.logo-menu {
+    height: 5rem;
+    background-image:url(/images/banco-logo.png);
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center;
+}
+
 
 
 /*=============================
@@ -341,6 +349,7 @@ footer .footer-col h3{
    
  }
 
+
  footer .footer-col .footerItem {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -359,6 +368,20 @@ footer .footer-col h3{
     font-size: 1rem;
     margin-left: 2rem;
     margin-top: 4rem;
+ }
+
+ .contact {
+    margin-left: 2rem;
+    margin-top: 1rem;
+ }
+
+ .contact h2{
+    color: #f2f2f2;
+ }
+
+ .contact p{
+    color: #f2f2f2;
+    opacity: .8;
  }
 
  .termes-and-conditions {

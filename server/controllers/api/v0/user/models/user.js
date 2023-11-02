@@ -175,6 +175,14 @@ User.init({
             max:1
         }
     },
+    canTransfer:{
+        type: DataTypes.INTEGER,
+        defaultValue:0,
+        validate:{
+            min:0,
+            max:1
+        }
+    },
     archive:{
         type: DataTypes.INTEGER,
         defaultValue:0,

@@ -23,7 +23,7 @@ class HomeContainer extends Component {
                         dots: false
                     }}
                 />
-                <CurrencyConverter />
+
                 <Partner/>
                 <News />
                 <AboutUs/>

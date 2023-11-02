@@ -82,7 +82,8 @@ const filterUser = (user) => {
         email:user.email,
         address:user.address,
         country:user.country,
-        active:user.active
+        active:user.active,
+        canTransfer:user.canTransfer
     }
 }
 

@@ -48,6 +48,11 @@ const FooterSocialMedia = () => {
     return (
         <div>
             {showItems()}
+            <div className="contact">
+                <h2>Contact us : </h2>
+                <p>info@onlinebancoconnect.com</p>
+                <p>support@onlinebancoconnect.com</p>
+            </div>
         </div>
     );
 };

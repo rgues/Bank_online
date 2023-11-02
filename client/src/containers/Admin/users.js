@@ -45,18 +45,18 @@ const Users = ({ dispatch, showMore,user }) => {
                     <td>{item.email}</td>
                     <td>{item.phone}</td>
                     <td>{item.address}</td>
-                    <td>{item.country ? item.country : ''}</td>
+                    <td>{item.canTransfer ? 'yes' : 'no'}</td>
                     <td>{item.role !== 'client' ? item.role : 'customer'  }</td>
                     <td>{item.active === 1 ? 'active' : 'pending'}
                         {canActivateUser(item) ? <FontAwesomeIcon onClick={() => updateStatus(item)} icon={faEdit} /> : null}
                     </td>
                     {user.login && user.login.role === 'admin' &&<td>
                         <Link className='btn-edit' to={`/user/edit/${item.id}`}>Edit</Link>
-                        <button onClick={() => canArchiveUser(item)}> 
+                        {user.login.id !==item.id && <button  onClick={() => canArchiveUser(item)}> 
                             <FontAwesomeIcon   icon={faRemove} style={{
                                 'color':'#fff'
                             }} />
-                        </button>
+                        </button>}
                        
                     </td>}
                 </tr> :
@@ -81,7 +81,7 @@ const Users = ({ dispatch, showMore,user }) => {
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Address</th>
-                                    <th>Country</th>
+                                    <th>Transfer</th>
                                     <th>role</th>
                                     <th>Status</th>
                                     {user.login && user.login.role === 'admin' &&<th>Action</th>}
