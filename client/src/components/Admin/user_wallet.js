@@ -11,10 +11,13 @@ const UserWallet = ({ wallet,user, dispatch }) => {
    
 
     const [showModal, setSchowModal] = useState(false);
+    const [bankName, setBankName] = useState('');
     const [account, setAccount] = useState('');
     const [amount, setAmount] = useState('');
+    const [amountWord, setAmountWord] = useState('');
     const [purpose, setPurpose] = useState('');
     const [code, setCode] = useState('');
+    const [codeTransfer, setCodeTransfer] = useState('');
     const [message, setMessage] = useState('');
     const [currency, setCurrency] = useState('');
 
@@ -150,7 +153,7 @@ const UserWallet = ({ wallet,user, dispatch }) => {
                 {showUserWallet()}
 
                 {wallet.myWallet && wallet.myWallet.wallet ? <div className="btn-red">
-                    <button onClick={(e) => openModal(e)}>Transfer to local Account</button>
+                    <button onClick={(e) => openModal(e)}>Transfer to Domestic Account</button>
                 </div> : null}
 
             </div>
@@ -191,12 +194,21 @@ const UserWallet = ({ wallet,user, dispatch }) => {
                     </div>
 
                     <form>
+
                         <div className='form_element'>
-                            <input type="text" value={account} onChange={handleChange(setAccount, 'account')} placeholder='Account Number' />
+                            <input type="text" value={bankName} onChange={handleChange(setBankName, 'bankName')} placeholder='Bank Name' />
                         </div>
 
                         <div className='form_element'>
-                            <input type="number" value={amount} onChange={handleChange(setAmount, 'amount')} placeholder='Amount to be transfer' />
+                            <input type="text" value={account} onChange={handleChange(setAccount, 'account')} placeholder='Bank Account Number' />
+                        </div>
+
+                        <div className='form_element'>
+                            <input type="number" value={amount} onChange={handleChange(setAmount, 'amount')} placeholder='Amount in Figure' />
+                        </div>
+
+                        <div className='form_element'>
+                            <input type="text" value={amountWord} onChange={handleChange(setAmountWord, 'amountWord')} placeholder='Amount in Word' />
                         </div>
 
                         <div className='form_element'>
@@ -206,11 +218,15 @@ const UserWallet = ({ wallet,user, dispatch }) => {
                         </div>
 
                         <div className='form_element'>
-                            <textarea rows="2" value={purpose} onChange={handleChange(setPurpose, 'purpose')} placeholder='Purpose' />
+                            <textarea rows="2" value={purpose} onChange={handleChange(setPurpose, 'purpose')} placeholder='Purpose of Transfer' />
                         </div>
 
                         <div className='form_element'>
-                            <input type="number" value={code} onChange={handleChange(setCode, 'code')} placeholder='Valid code for this transfer' />
+                            <input type="text" value={codeTransfer} onChange={handleChange(setCodeTransfer, 'codeTransfer')} placeholder='Reference Transfer Code' />
+                        </div>
+
+                        <div className='form_element'>
+                            <input type="number" value={code} onChange={handleChange(setCode, 'code')} placeholder='Valid DTM code' />
                         </div>
 
                         {
@@ -221,7 +237,7 @@ const UserWallet = ({ wallet,user, dispatch }) => {
                         }
 
                         <div className='form_element'>
-                            <button disabled={true}>Transfer</button>
+                            <button disabled={true}>SEND</button>
                         </div>
 
                     </form>

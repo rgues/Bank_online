@@ -477,12 +477,12 @@ footer .footer-col h3{
 .modal-container {
     z-index: 10000;
     position: absolute;
-    top:20%;
+    top:5%;
     left: 35%;
     background: rgba(0, 0, 0, .8);
     text-align: left;
-    height: 550px;
-    width: 500px;
+    height: 800px;
+    width: 600px;
     border-radius: 20px;
     box-sizing: border-box;
 }
@@ -1135,9 +1135,9 @@ footer .footer-col h3{
     .modal-container {
         z-index: 10000;
         position: absolute;
-        top:25%;
+        top:15%;
         left: 5%;
-        height: 450px;
+        height: 650px;
         width: 400px;
     }
 
@@ -1214,9 +1214,9 @@ footer .footer-col h3{
     .modal-container {
         z-index: 10000;
         position: absolute;
-        top:50%;
+        top:40%;
         left: 5%;
-        height: 550px;
+        height: 750px;
         width: 400px;
     }
 
@@ -1294,7 +1294,7 @@ footer .footer-col h3{
         position: absolute;
         top:45%;
         left: 25%;
-        height: 550px;
+        height:700px;
         width: 500px;
     }
 
@@ -1362,9 +1362,9 @@ footer .footer-col h3{
     .modal-container {
         z-index: 10000;
         position: absolute;
-        top:40%;
+        top:20%;
         left: 25%;
-        height: 600px;
+        height: 800px;
         width: 600px;
     }
 
@@ -1417,9 +1417,9 @@ footer .footer-col h3{
     .modal-container {
         z-index: 10000;
         position: absolute;
-        top:30%;
+        top:20%;
         left: 25%;
-        height: 600px;
+        height: 800px;
         width: 600px;
     }
 

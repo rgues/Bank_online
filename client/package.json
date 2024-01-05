@@ -2,7 +2,7 @@
   "name": "Banco Connect",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://onlinebancoconnect.com",
+  "homepage": ".",
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "7.21.11",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
