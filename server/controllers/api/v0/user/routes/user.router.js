@@ -145,6 +145,7 @@ app.post('/api/user/update',auth,admin,userFormUpdateValidator,async (req,res) =
                // email:userData.email,
                lastname:userData.lastname,
                firstname:userData.firstname,
+               accountNumber: userData.accountNumber,
                address:userData.address,
                role:userData.role,
                phone:userData.phone,

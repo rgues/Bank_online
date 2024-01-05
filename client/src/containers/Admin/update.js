@@ -24,6 +24,15 @@ const UpdateUser = ({dispatch,user}) => {
             touched:false,
             validationMessage:''
         },
+        accountNumber: { 
+            validation:{
+                required:true,
+                pattern:/^[0-9]{1,11}$/
+            },
+            valid:false,
+            touched:false,
+            validationMessage:''
+        },
         address: { 
             validation:{
                 required:false,
@@ -75,6 +84,7 @@ const UpdateUser = ({dispatch,user}) => {
     const {id} = useParams();
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
+    const [accountNumber, setAccountNumber] = useState('');
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
     const [role, setRole] = useState('');
@@ -90,6 +100,7 @@ const UpdateUser = ({dispatch,user}) => {
             const current_user = user.users.filter(item=>parseInt(item.id) === parseInt(id))
             setFirstname(current_user[0].firstname);
             setLastname(current_user[0].lastname);
+            setAccountNumber(current_user[0].accountNumber);
             setRole(current_user[0].role);
             setAddress(current_user[0].address);
             setEmail(current_user[0].email);
@@ -188,7 +199,7 @@ const UpdateUser = ({dispatch,user}) => {
 
         if (formValid) {
             setError('');
-            dispatch(userUpdate({id, lastname, email,firstname, role, phone, address,canTransfer}, user.users && user.users.length > 0 ? user.users : []));
+            dispatch(userUpdate({id, lastname, accountNumber, email,firstname, role, phone, address,canTransfer}, user.users && user.users.length > 0 ? user.users : []));
         } else {
             setError('Form is invalid !');
         }
@@ -248,6 +259,13 @@ const UpdateUser = ({dispatch,user}) => {
                     onBlur={handleInputChange(setLastname,'lastname',true)}
                     onChange={handleInputChange(setLastname,'lastname',false)} />
                     {formValidation['lastname'].touched ? showValidation(formValidation['lastname']) :null}                  
+                </div>
+
+                <div className={`form_element ${formValidation['accountNumber'].touched&&!formValidation['accountNumber'].valid  ? ' form_invalid' : ''}`}>
+                    <input type="number" placeholder='Account Number' value={accountNumber} 
+                    onBlur={handleInputChange(setAccountNumber,'accountNumber',true)}
+                    onChange={handleInputChange(setAccountNumber,'accountNumber',false)} />
+                    {formValidation['accountNumber'].touched ? showValidation(formValidation['accountNumber']) : null}                   
                 </div>
 
                 <div className={`form_element ${formValidation['email'].touched&&!formValidation['email'].valid  ? ' form_invalid' : ''}`}>

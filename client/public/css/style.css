@@ -889,6 +889,51 @@ footer .footer-col h3{
     padding-bottom: .5rem;
 }
 
+.about-container, .borrow-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 5% 10%;
+}
+
+.about-card-title h1 {
+    color: #a32a29;
+    font-size: 1.7rem;
+} 
+
+.about-card-body p {
+    padding: 1rem;
+}
+
+.about-card-body-value {
+    color: #222;
+    font-weight: 900;
+}
+
+
+.borrow-card-title h1 {
+    color: #a32a29;
+    font-size: 1.7rem;
+} 
+
+.borrow-card-body p {
+    padding: 1rem;
+}
+
+.borrow-container-header, .about-container-header {
+    background: rgba(125, 125, 0, .1);
+}
+
+.about-container-header h1, .borrow-container-header h1 {
+    color: #a32a29;
+    font-size: 2rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+
+
 
 .user_container {
     display: flex;
@@ -1137,7 +1182,7 @@ footer .footer-col h3{
         position: absolute;
         top:15%;
         left: 5%;
-        height: 650px;
+        height: 700px;
         width: 400px;
     }
 
@@ -1216,7 +1261,7 @@ footer .footer-col h3{
         position: absolute;
         top:40%;
         left: 5%;
-        height: 750px;
+        height: 850px;
         width: 400px;
     }
 
@@ -1294,7 +1339,7 @@ footer .footer-col h3{
         position: absolute;
         top:45%;
         left: 25%;
-        height:700px;
+        height:750px;
         width: 500px;
     }
 
@@ -1364,7 +1409,7 @@ footer .footer-col h3{
         position: absolute;
         top:20%;
         left: 25%;
-        height: 800px;
+        height: 820px;
         width: 600px;
     }
 
@@ -1419,7 +1464,7 @@ footer .footer-col h3{
         position: absolute;
         top:20%;
         left: 25%;
-        height: 800px;
+        height: 820px;
         width: 600px;
     }
 

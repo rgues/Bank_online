@@ -28,7 +28,7 @@ const AboutUs = () => {
         },
         {
             title: 'About Banco Connect',
-            url: '/',
+            url: '/aboutUs',
             icon: faArrowAltCircleRight
         }
     ];

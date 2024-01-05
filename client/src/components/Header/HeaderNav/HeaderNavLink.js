@@ -6,7 +6,7 @@ export const HeaderLinkItems = [
         type: 'navItem',
         icon: faHome,
         text: 'About Banco',
-        link: '/',
+        link: '/aboutUs',
         position:'menu-1',
         restricted: false,
         role:'all'
@@ -103,7 +103,7 @@ export const HeaderLinkItems = [
         type: 'navItem',
         icon: faHome,
         text: 'Borrow',
-        link: '/',
+        link: '/borrow',
         position:'menu-2',
         restricted: false,
         role:'all'

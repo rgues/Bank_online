@@ -5,6 +5,9 @@ import Layout from './hoc/Layout';
 import Auth from './hoc/auth';
 
 import Home from './components/Home/Home';
+import AboutUs from './components/AboutUs';
+import BorrowFromUs from './components/BorrowFromUs';
+
 import User from './components/Admin';
 import Logout from './components/Admin/logout';
 
@@ -17,6 +20,8 @@ import UsersContainer from './containers/users_container';
 import UpdatePassword from './containers/Admin/updatePassword';
 
 const AuthenticateHome = Auth(Home,null);
+const AboutUsView = Auth(AboutUs,null);
+const BorrowFromUsView = Auth(BorrowFromUs,null);
 const UserProfile = Auth(User,true);
 const UserLogin = Auth(Login,false);
 const UpdatePasswordView = Auth(UpdatePassword,true);
@@ -32,6 +37,8 @@ const Router = () => (
     <Layout >
         <Routes>
             <Route path='/' exact element={ <AuthenticateHome/>} />
+            <Route path='/aboutUs' exact element={ <AboutUsView/>} />
+            <Route path='/borrow' exact element={ <BorrowFromUsView/>} />
             <Route path='/login' exact element={<UserLogin />} />
             <Route path='/update/password' exact element={<UpdatePasswordView />} />
             <Route path='/user' exact element={<UserProfile />} />

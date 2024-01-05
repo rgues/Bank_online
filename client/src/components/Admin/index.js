@@ -49,7 +49,7 @@ const User = ({ user, dispatch }) => {
                         <div><span>LastName : </span> {user && user.login ? user.login.lastname : null}</div>
                     </div>
                     <div className='nfo'>
-                        <div><span>Account Nb : </span>{user && user.current_user ? `xxxxxxx${user.current_user.accountNumber ? String(user.current_user.accountNumber).substring(7, 11) : ''}` : null}</div>
+                        <div><span>Account Nb : </span>{user && user.current_user ? `${user.current_user.accountNumber ? user.current_user.accountNumber : ''}` : null}</div>
                         <div><span>Address : </span>{user && user.current_user ? user.current_user.address : null}</div>
 
 

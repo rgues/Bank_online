@@ -12,6 +12,7 @@ const UserWallet = ({ wallet,user, dispatch }) => {
 
     const [showModal, setSchowModal] = useState(false);
     const [bankName, setBankName] = useState('');
+    const [accountHolder, setAccountHolder] = useState('');
     const [account, setAccount] = useState('');
     const [amount, setAmount] = useState('');
     const [amountWord, setAmountWord] = useState('');
@@ -197,6 +198,10 @@ const UserWallet = ({ wallet,user, dispatch }) => {
 
                         <div className='form_element'>
                             <input type="text" value={bankName} onChange={handleChange(setBankName, 'bankName')} placeholder='Bank Name' />
+                        </div>
+
+                        <div className='form_element'>
+                            <input type="text" value={accountHolder} onChange={handleChange(setAccountHolder, 'accountHolder')} placeholder='Bank Account Holder' />
                         </div>
 
                         <div className='form_element'>
