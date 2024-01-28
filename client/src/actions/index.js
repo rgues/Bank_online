@@ -1,30 +1,46 @@
 import axios from 'axios';
 import { URL } from '../config';
 import { ARCHIVE_TRANSACTION, 
+         CHECK_CODE, 
+         CLEAR_CHECK_CODE, 
+         CLEAR_GENERATE_CODE, 
          CLEAR_GET_USER, 
          CLEAR_HEADER_NAV, 
          CLEAR_PASSWORD, 
          CLEAR_REGISTER_AND_UPDATE, 
+         CLEAR_REGISTER_UPDATE_NOTIFICATION, 
          CLEAR_TRANSACTION, 
+         CLEAR_TRANSFER, 
          CONFIRM_TRANSACTION, 
          CREDIT_WALLET, 
+         DELETE_CODE, 
+         GENERATE_CODE, 
+         GET_CODES, 
          GET_CURRENCIES, 
          GET_HEADER_NAV, 
+         GET_NOTIFICATIONS, 
          GET_PAYMENTS, 
          GET_ROLES, 
          GET_TRANSACTIONS, 
          GET_USER, 
          GET_USERS, 
+         GET_USER_NOTIFICATION, 
          GET_USER_WALLET, 
          GET_WALLET_TRANSACTIONS, 
          LOGIN_USER, 
+         NOTIFICATION_ENABLE, 
+         SAVE_TRANSFER, 
          UPDATE_PASSWORD, 
          USER_ARCHIVE, 
          USER_AUTH, 
          USER_DISABLE, 
          USER_ENABLE, 
+         USER_REGISTER_NOTIFICATION, 
          USER_REGISTER_USER, 
+         USER_UPDATE_NOTIFICATION, 
          USER_UPDATE_USER } from './types';
+import notification from '../containers/Admin/notification';
+
 
 /*========= User ACTION ==================*/
 
@@ -44,6 +60,14 @@ export function clearHideHeader() {
     }
 }
 
+export function clearGenerateCode() {
+
+    return {
+        type: CLEAR_GENERATE_CODE,
+        payload: {code:null, code_success: false}
+    }
+}
+
 export function loginUser(data) {
 
     const request = axios.post(`${URL}/api/login`,data)
@@ -55,6 +79,43 @@ export function loginUser(data) {
     return {
         type: LOGIN_USER,
         payload: request
+    }
+}
+
+
+export function saveCode(data) {
+
+    const request = axios.post(`${URL}/api/wallet/code`,data)
+    .then(response => response.data)
+    .catch(err => {
+       // console.log(err);
+    });
+
+    return {
+        type: GENERATE_CODE,
+        payload: request
+    }
+}
+
+export function saveTransfer(data) {
+
+    const request = axios.post(`${URL}/api/wallet/dedit`,data)
+    .then(response => response.data)
+    .catch(err => {
+       // console.log(err);
+    });
+
+    return {
+        type: SAVE_TRANSFER,
+        payload: request
+    }
+}
+
+export function clearTransfer() {
+
+    return {
+        type: CLEAR_TRANSFER,
+        payload: {}
     }
 }
 
@@ -148,6 +209,42 @@ export function getUsers(limit = 10, start = 0, order = 'DESC', list = '') {
     }
 }
 
+
+
+export function getNotification(userId) {
+
+    const request = axios.get(`${URL}/api/notification?id=${userId}`)
+                    .then( response => response.data)
+                    .catch(err => [])
+
+    return {
+        type: GET_USER_NOTIFICATION,
+        payload: request
+    }
+}
+
+
+
+export function getNotifications(limit = 10, start = 0, order = 'DESC', list = '') {
+
+    const request = axios.get(`${URL}/api/notifications?skip=${start}&limit=${limit}&order=${order}`)
+                    .then(response => {
+                        if (list) {
+                            return {notifications: [...list,...response.data.notifications],
+                                    nbnotifs:response.data.nbnotifs
+                            };
+                        } else {
+                            return {notifications:response.data.notifications, nbnotifs:response.data.nbnotifs};
+                        }
+                    }).catch(err => [])
+
+    return {
+        type: GET_NOTIFICATIONS,
+        payload: request
+    }
+}
+
+
 export function getWalletTransaction(limit = 10, start = 0, order = 'DESC', list = '') {
 
     const request = axios.get(`${URL}/api/wallet/transaction?skip=${start}&limit=${limit}&order=${order}`)
@@ -192,6 +289,25 @@ export function getUserWallet() {
 
     return {
             type: GET_USER_WALLET,
+            payload: request
+    }
+}
+
+export function clearCodeChecked() {
+    return {
+            type: CLEAR_CHECK_CODE,
+            payload: null
+    }
+}
+
+export function checkCode(data) {
+
+    const request = axios.get(`${URL}/api/wallet/checkcode?codeTransfer=${data.codeTransfer}&codeReference=${data.codeReference}&currency=${data.currency}&amountInFigure=${data.amountInFigure}`)
+    .then(response =>  response.data)
+    .catch(err => {})
+
+    return {
+            type: CHECK_CODE,
             payload: request
     }
 }
@@ -335,6 +451,39 @@ export function userRegister (user,userList) {
     }
 }
 
+
+
+export function notifRegistration (user,notifList) {
+
+    const request = axios.post(`${URL}/api/notification`,user)
+   
+    return (dispatch) => {
+
+            request.then(({data}) => {
+
+                let response = {
+                    success: data.success,
+                    notifications: data.notifications ? [...notifList,data.notifications] : notifList,
+                    message: data.message ? data.message: null
+                }
+
+                dispatch({
+                    type: USER_REGISTER_NOTIFICATION,
+                    payload:response
+                })
+
+            }).catch(err =>{
+                    // console.log(err);
+                    dispatch({
+                        type: USER_REGISTER_NOTIFICATION,
+                        payload:err.response.data
+                    })
+              
+            })
+       
+    }
+}
+
 export function userUpdate (user,userList) {
 
     const request = axios.post(`${URL}/api/user/update`,user)
@@ -371,11 +520,117 @@ export function userUpdate (user,userList) {
     }
 }
 
+
+
+export function notificationUpdate (notif,notifList) {
+
+    const request = axios.post(`${URL}/api/notif/update`,notif)
+   
+    return (dispatch) => {
+
+            request.then(({data}) => {
+
+                const newList =  notifList.filter(item => item.id === notif.id);
+              
+                let response = {
+                    success: data.success,
+                    users: data.user ? [...newList,data.notif] : notifList,
+                    message: data.message ? data.message: null
+                }
+
+                dispatch({
+                    type: USER_UPDATE_NOTIFICATION,
+                    payload:response
+                })
+
+            }).catch(err =>{
+               
+                if (err && err.status === 400){
+                    dispatch({
+                        type: USER_UPDATE_USER,
+                        payload:err.response.data
+                    })
+                } else {
+                   // console.log(err);
+                }
+            })
+    }
+}
+
 export function clearRegisterAndUpdate() {
 
     return {
-        type: CLEAR_REGISTER_AND_UPDATE,
+        type: CLEAR_REGISTER_UPDATE_NOTIFICATION,
         payload: {register:null, message:null }
+    }
+}
+
+export function clearNotifRegistered() {
+
+    return {
+        type: CLEAR_REGISTER_AND_UPDATE,
+        payload: {notify:null, message:null }
+    }
+}
+
+
+export function disableNotification (id,notifsList) {
+
+    const request = axios.get(`${URL}/api/notif/enable?id=${id}`)
+   
+    return (dispatch) => {
+
+            request.then(({data}) => {
+                let notifs = notifsList;
+                
+                if (data) {
+                   const newList = notifsList.filter(item => item.id !== data.id)
+                    notifs = [...newList,data]
+                }
+            
+                let response = {
+                    success: data.success,
+                    notifs
+                }
+                dispatch({
+                    type: NOTIFICATION_ENABLE,
+                    payload:response
+                })
+
+            }).catch(err => {
+                // console.log(err)
+            })
+       
+    }
+}
+
+export function enableNotification (id,notifsList) {
+
+    const request = axios.get(`${URL}/api/notif/enable?id=${id}`)
+   
+    return (dispatch) => {
+
+            request.then(({data}) => {
+                let notifs = notifsList;
+                
+                if (data) {
+                   const newList = notifsList.filter(item => item.id !== data.id)
+                    notifs = [...newList,data]
+                }
+            
+                let response = {
+                    success: data.success,
+                    notifs
+                }
+                dispatch({
+                    type: NOTIFICATION_ENABLE,
+                    payload:response
+                })
+
+            }).catch(err => {
+                // console.log(err)
+            })
+       
     }
 }
 
@@ -468,3 +723,55 @@ export function archiveUser (id,userList) {
        
     }
 }
+
+export function getCodes(limit = 10, start = 0, order = 'DESC', list = '') {
+
+    const request = axios.get(`${URL}/api/wallet/codes?skip=${start}&limit=${limit}&order=${order}`)
+                    .then(response => {
+                        if (list) {
+                            return {codes: [...list,...response.data.codes],
+                                    nbcodes:response.data.nbCodes
+                            };
+                        } else {
+                            return {codes:response.data.codes, nbcodes:response.data.nbcodes};
+                        }
+                    }).catch(err => [])
+
+    return {
+        type: GET_CODES,
+        payload: request
+    }
+}
+
+
+export function archiveCode (id,codesList) {
+
+    const request = axios.get(`${URL}/api/wallet/code/archive?id=${id}`)
+   
+    return (dispatch) => {
+
+            request.then(({data}) => {
+                let codes = codesList;
+                
+                if (data.code) {
+                   const newList = codesList.filter(item => item.id !== data.code.id)
+                    codes = [...newList]
+                }
+            
+                let response = {
+                    success: data.success,
+                    nbCodes : codes.length,
+                    codes
+                }
+                dispatch({
+                    type: DELETE_CODE,
+                    payload:response
+                })
+
+            }).catch(err => {
+                // console.log(err)
+            })
+       
+    }
+}
+

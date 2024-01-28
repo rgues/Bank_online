@@ -18,6 +18,8 @@ import UpdateUser from './containers/Admin/update';
 import TransactionsContainer from './containers/transactions_container';
 import UsersContainer from './containers/users_container';
 import UpdatePassword from './containers/Admin/updatePassword';
+import CodeContainer from './containers/code_container';
+import GenerateCode from './containers/Admin/generateCode';
 
 const AuthenticateHome = Auth(Home,null);
 const AboutUsView = Auth(AboutUs,null);
@@ -31,6 +33,8 @@ const UpdateView = Auth(UpdateUser,true);
 const TransferView = Auth(Transfer,true);
 const UsersView = Auth(UsersContainer,true);
 const TransactionsView = Auth(TransactionsContainer,true);
+const CodesTransferView = Auth(CodeContainer,true);
+const GenerateCodeView = Auth(GenerateCode,true);
 
 const Router = () => (
 
@@ -48,6 +52,8 @@ const Router = () => (
             <Route path='/user/register' exact element={<RegisterView />} />
             <Route path='/user/logout' exact element={<UserLogout />} />
             <Route path='/user/wallet/transfer' exact element={<TransferView />} />
+            <Route path='/user/wallet/codes' exact element={<CodesTransferView />} />
+            <Route path='/user/wallet/generateCode' exact element={<GenerateCodeView />} />
             <Route path='*' exact element={<UserLogin />} />
         </Routes>
     </Layout>

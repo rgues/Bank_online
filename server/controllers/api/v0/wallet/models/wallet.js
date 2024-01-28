@@ -86,4 +86,4 @@ Wallet.init({
     }
 },{sequelize, freezeTableName: true,modelName:'Wallet',paranoid: true, deletedAt: 'destroyTime'});
 
-module.exports = { Wallet } 
+module.exports = { Wallet }

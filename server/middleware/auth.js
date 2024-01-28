@@ -5,7 +5,7 @@ let auth =  (req,res,next) => {
 
     try {
 
-        let token = req.cookies.authToken || 'eyJhbGciOiJIUzI1NiJ9.Mw.-l3ugriBnt7gV192ZU2KgQDEQQpqfGJCpUYmPVUCUhk';
+        let token = req.cookies.authToken || 'eyJhbGciOiJIUzI1NiJ9.MQ.xFExH6urle9ubfOrQQgfryQ7eLG-kbB6AJZV235IjQY';
         User.findByToken(token,(err,user) => {
             if(err) return res.status(400).send(err);
             if(!user) return res.json({
@@ -21,7 +21,6 @@ let auth =  (req,res,next) => {
         return res.json({ error:true});
     }
     
-
 }
 
 module.exports = {auth};

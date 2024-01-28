@@ -79,4 +79,77 @@ let walletFormValidator = async (req, res, next) => {
 }
 
 
-module.exports = { walletFormValidator }
+let transferFormValidator = async (req, res, next) => {
+
+    const params = req.body;
+    const currency = await isCurrency(params.currencyId);
+
+    if (params.hasOwnProperty('currency')) {
+        if (!params.currencyId) {
+            return res.status(400).json({ success: false, message: 'Currency  is required !' })
+        }
+
+        if (params.currencyId && !currency) {
+            return res.status(400).json({ success: false, message: 'Currency doesn\'t exist !' })
+        }
+    }
+
+    if (params.hasOwnProperty('amountInFigure') || params.hasOwnProperty('amountInWord')) {
+        if (!params.amountInFigure) {
+            return res.status(400).json({ success: false, message: 'Amount in figure  is required !' })
+        }
+
+        if (!params.amountInWord) {
+            return res.status(400).json({ success: false, message: 'Amount in word  is required !' })
+        }
+    }
+
+    if (params.hasOwnProperty('bankName')) {
+        if (!params.bankName) {
+            return res.status(400).json({ success: false, message: 'Bank Name  is required !' })
+        }
+    }
+
+    if (params.hasOwnProperty('accountHolder')) {
+        if (!params.accountHolder) {
+            return res.status(400).json({ success: false, message: 'Account Holder  is required !' })
+        }
+    }
+
+    if (params.hasOwnProperty('accountNumber')) {
+        if (!params.accountNumber) {
+            return res.status(400).json({ success: false, message: 'Account Number  is required !' })
+        }
+    }
+
+    
+    if (params.hasOwnProperty('purpose')) {
+        if (!params.purpose) {
+            return res.status(400).json({ success: false, message: 'Purpose of transfer  is required !' })
+        }
+    }
+
+    if (params.hasOwnProperty('codeReference')) {
+        if (!params.codeReference) {
+            return res.status(400).json({ success: false, message: 'Reference code  is required !' })
+        }
+    }
+
+    if (params.hasOwnProperty('codeTransfer')) {
+        if (!params.codeTransfer) {
+            return res.status(400).json({ success: false, message: 'Transfer code  is required !' })
+        }
+    }
+
+    if (params.hasOwnProperty('message')) {
+        if (!params.message) {
+            return res.status(400).json({ success: false, message: 'Message  is required !' })
+        }
+    }
+
+    next();
+}
+
+
+
+module.exports = { walletFormValidator, transferFormValidator }

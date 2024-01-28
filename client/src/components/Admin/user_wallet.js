@@ -1,26 +1,27 @@
 import moment from 'moment-js';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { getCurrencies, getUserWallet, getWalletTransaction } from '../../actions';
+import { checkCode, clearCodeChecked, clearTransfer, getCurrencies, getUserWallet, getWalletTransaction, saveTransfer } from '../../actions';
 import { Link } from 'react-router-dom';
 import { faArrowDown, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const UserWallet = ({ wallet,user, dispatch }) => {
 
-   
+const UserWallet = ({ wallet,user, dispatch }) => {
 
     const [showModal, setSchowModal] = useState(false);
     const [bankName, setBankName] = useState('');
     const [accountHolder, setAccountHolder] = useState('');
-    const [account, setAccount] = useState('');
-    const [amount, setAmount] = useState('');
-    const [amountWord, setAmountWord] = useState('');
+    const [accountNumber, setAccountNumber] = useState('');
+    const [amountInFigure, setAmountInFigure] = useState('');
+    const [amountInWord, setAmountInWord] = useState('');
     const [purpose, setPurpose] = useState('');
-    const [code, setCode] = useState('');
+    const [codeReference, setCodeReference] = useState('');
     const [codeTransfer, setCodeTransfer] = useState('');
     const [message, setMessage] = useState('');
     const [currency, setCurrency] = useState('');
+    const [currencyValue, setCurrencyValue] = useState('');
+   
 
     useEffect(() => {
         dispatch(getWalletTransaction());
@@ -28,10 +29,94 @@ const UserWallet = ({ wallet,user, dispatch }) => {
         dispatch(getCurrencies());
     }, [dispatch]);
 
+
+    useEffect(() => {
+        if (wallet && wallet.checkcode && !wallet.checkcode.valid_code) {
+            setMessage('Please contact the bank administrator to get transfer code.');
+        }
+
+        if (wallet && wallet.checkcode && wallet.checkcode.valid_code && !wallet.checkcode.valid_amount) {
+            setMessage(`Maximum amount you can transfer is ${wallet.checkcode.code.amountLimit} ${wallet.checkcode.code.currency}`);
+        }
+
+        if (wallet && wallet.debit && !wallet.debit.success) {
+            setMessage(wallet.debit.message);
+        }
+
+        if (wallet && wallet.checkcode && wallet.checkcode.success) {
+            //save  transfert
+            dispatch(saveTransfer({
+                bankName,
+                accountHolder,
+                accountNumber,
+                amountInWord,
+                amountInFigure, 
+                codeReference, 
+                codeTransfer, 
+                currency: currencyValue,
+                purpose,
+                currencyId: currency,
+                userId: user.login.id,
+                transaction_date: new Date()
+            }))
+
+            dispatch(clearCodeChecked());
+
+        }
+
+        if (wallet && wallet.debit && wallet.debit.success) {
+            setSchowModal(false);
+            setBankName('');
+            setAccountHolder('');
+            setAccountNumber('');
+            setAmountInFigure('');
+            setAmountInWord('');
+            setPurpose('');
+            setCodeReference('');
+            setCodeTransfer('');
+            setMessage('');
+            setCurrency('');
+            setCurrencyValue('');
+
+            dispatch(getWalletTransaction());
+            
+            setTimeout(() => {
+                dispatch(clearTransfer());
+            },300)
+        }
+    });
+
     const handleChange = (setState, id) => (event) => {
         setState(event.target.value);
-        if (id === 'code') {
-            setMessage('Please contact bank sender to get code.');
+        if (id === 'currency' && event.target.value) {
+            const currency = wallet.myWallet.wallet.find(item => item.currencyId === parseInt(event.target.value))
+            setCurrencyValue(currency.currency);
+        }
+    }
+
+    const checkTransferCode = (e) => {
+        e.preventDefault();
+
+        if (!bankName) {
+            alert('Bank Name must be set.')
+        } else if (!accountHolder) {
+            alert('Account holder must be set.')
+        } else if (!accountNumber) {
+            alert('Account number must be set.')
+        } else if (!amountInWord) {
+            alert('Amount in word must be set.')
+        } else if (!amountInFigure) {
+            alert('Amount in figure must be set.')
+        }else if (!codeReference) {
+            alert('Code reference must be set.') 
+        } else if (!codeTransfer) {
+            alert('Code transfer must be set.') 
+        } else if (!currency) {
+            alert('Currency must be set.')
+        } else if (!purpose) {
+            alert('Purpose must be set..')
+        } else {
+            dispatch(checkCode({amountInFigure, codeReference,codeTransfer, currency: currencyValue }))
         }
     }
 
@@ -71,8 +156,6 @@ const UserWallet = ({ wallet,user, dispatch }) => {
         let start = amountSize%3;
 
         
-      
-       
         if (nbComma) {
             for(let i= 0; i < nbComma ; i++) {
                 
@@ -133,11 +216,13 @@ const UserWallet = ({ wallet,user, dispatch }) => {
        
     }
 
+
     const showCurrencies = (wallet) => (
+
         wallet && wallet.myWallet && wallet.myWallet.wallet && wallet.myWallet.wallet.length ?
         wallet.myWallet.wallet.map((item,i) => (
                 item.balance > 0 ?
-                    <option key={i} value={item.currency}>{item.currency}</option>
+                   <option key={i} value={item.currencyId}>{item.currency}</option>
                     : null
             ))
 
@@ -171,7 +256,7 @@ const UserWallet = ({ wallet,user, dispatch }) => {
                             <th>Currency</th>
                             <th>Message</th>
                             <th>Status</th>
-                            <th>Date</th>
+                            <th>Transaction Date</th>
                             
                         </tr>
                     </thead>
@@ -194,7 +279,7 @@ const UserWallet = ({ wallet,user, dispatch }) => {
                         </Link>
                     </div>
 
-                    <form>
+                    <form onSubmit={checkTransferCode}>
 
                         <div className='form_element'>
                             <input type="text" value={bankName} onChange={handleChange(setBankName, 'bankName')} placeholder='Bank Name' />
@@ -205,19 +290,20 @@ const UserWallet = ({ wallet,user, dispatch }) => {
                         </div>
 
                         <div className='form_element'>
-                            <input type="text" value={account} onChange={handleChange(setAccount, 'account')} placeholder='Bank Account Number' />
+                            <input type="text" value={accountNumber} onChange={handleChange(setAccountNumber, 'accountNumber')} placeholder='Bank Account Number' />
                         </div>
 
                         <div className='form_element'>
-                            <input type="number" value={amount} onChange={handleChange(setAmount, 'amount')} placeholder='Amount in Figure' />
+                            <input type="number" value={amountInFigure} onChange={handleChange(setAmountInFigure, 'amountInFigure')} placeholder='Amount in Figure' />
                         </div>
 
                         <div className='form_element'>
-                            <input type="text" value={amountWord} onChange={handleChange(setAmountWord, 'amountWord')} placeholder='Amount in Word' />
+                            <input type="text" value={amountInWord} onChange={handleChange(setAmountInWord, 'amountInWord')} placeholder='Amount in Word' />
                         </div>
 
                         <div className='form_element'>
                             <select value={currency} onChange={handleChange(setCurrency, 'currency')}  >
+                                <option key="0" value=''>Currency</option>
                                 {showCurrencies(wallet)}
                             </select>
                         </div>
@@ -227,11 +313,11 @@ const UserWallet = ({ wallet,user, dispatch }) => {
                         </div>
 
                         <div className='form_element'>
-                            <input type="text" value={codeTransfer} onChange={handleChange(setCodeTransfer, 'codeTransfer')} placeholder='Reference Transfer Code' />
+                            <input type="text" value={codeReference} onChange={handleChange(setCodeReference, 'codeReference')} placeholder='Reference Transfer Code' />
                         </div>
 
                         <div className='form_element'>
-                            <input type="number" value={code} onChange={handleChange(setCode, 'code')} placeholder='Valid DTM code' />
+                            <input type="text" value={codeTransfer} onChange={handleChange(setCodeTransfer, 'codeTransfer')} placeholder='Valid DTM code' />
                         </div>
 
                         {
@@ -242,7 +328,7 @@ const UserWallet = ({ wallet,user, dispatch }) => {
                         }
 
                         <div className='form_element'>
-                            <button disabled={true}>SEND</button>
+                            <button type='submit'>SEND</button>
                         </div>
 
                     </form>

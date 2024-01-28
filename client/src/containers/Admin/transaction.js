@@ -79,7 +79,7 @@ const Transaction = ({ user,wallet, showMore, dispatch }) => {
                                 <th>Remark</th>
                                 <th>Message</th>
                                 <th>Status</th>
-                                <th>Date</th>
+                                <th>Transaction Date</th>
                                 <th>Confirm</th>
                                 <th>Action</th>
                             </tr>

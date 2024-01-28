@@ -45,6 +45,7 @@ app.use(cors({
 // Import routes from files
   require('./controllers/api/v0/auth/routes/auth.router')(app);
   require('./controllers/api/v0/user/routes/user.router')(app);
+  require('./controllers/api/v0/user/routes/notification.router')(app);
   require('./controllers/api/v0/wallet/routes/wallet.router')(app);
 
 

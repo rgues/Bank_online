@@ -8,7 +8,7 @@ const News = () => {
     const newsData = [
         {
             image:'news-1.png',
-            title:'Banco Connect successfully excel gaining more customers based on the quality of his service',
+            title:'Banco Connect successfully excel gaining more customers in the offshore based on the quality of his service',
             description:'We are always looking forward to giving a handshake to our favorite clients.',
             id:1,
             show:true

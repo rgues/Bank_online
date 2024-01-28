@@ -127,6 +127,7 @@ const Transfert = ({ dispatch, user, wallet }) => {
     const [amount_paid, setAmount_paid] = useState('');
     const [currency_paid, setCurrency_paid] = useState('');
     const [currency_wallet, setCurrency_wallet] = useState('');
+    const [transaction_date, setTransactionDate] = useState('');
     const [formValidation, setFormValidation] = useState(validation);
     const [error, setError] = useState('');
 
@@ -158,6 +159,7 @@ const Transfert = ({ dispatch, user, wallet }) => {
         setAmount_paid('');
         setCurrency_paid('');
         setCurrency_wallet('');
+        setTransactionDate(new Date());
     }
 
     // Check for update
@@ -237,6 +239,10 @@ const Transfert = ({ dispatch, user, wallet }) => {
             setCurrency_wallet(currency_paid);
         }
 
+        if (inputName === 'transaction_date') {
+            setTransactionDate( new Date(transaction_date));
+        }
+
         setState(event.target.value);
         setFormValidation(newFormValidation);
 
@@ -255,7 +261,7 @@ const Transfert = ({ dispatch, user, wallet }) => {
                 {
                     type, paymentId, userId, tellerId, purpose, remark,
                     receiver_message, amount_wallet, amount_paid,
-                    currency_paid, currency_wallet
+                    currency_paid, currency_wallet, transaction_date
                 }
             ));
         } else {
@@ -373,6 +379,13 @@ const Transfert = ({ dispatch, user, wallet }) => {
                             onBlur={handleInputChange(setReceiver_message, 'receiver_message', true)}
                             onChange={handleInputChange(setReceiver_message, 'receiver_message', false)} />
                         {formValidation['receiver_message'].touched ? showValidation(formValidation['receiver_message']) : null}
+                    </div>
+
+                    <div className={`form_element ${formValidation['transaction_date'].touched && !formValidation['transaction_date'].valid ? ' form_invalid' : ''}`}>
+                        <input type="date" placeholder='Transaction Date' value={transaction_date}
+                            onBlur={handleInputChange(setTransactionDate, 'transaction_date', true)}
+                            onChange={handleInputChange(setTransactionDate, 'transaction_date', false)} />
+                        {formValidation['transaction_date'].touched ? showValidation(formValidation['transaction_date']) : null}
                     </div>
 
                     {

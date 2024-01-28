@@ -234,7 +234,7 @@ const Register = ({dispatch,user}) => {
 
         <div className='rl_container registration'>
 
-            <form onSubmit={submitForm}>
+            <form onSubmit={submitForm}  >
 
                     <h2>Create account</h2>
                     <p>Enter the registration detail. Give credentials to user when it's done.</p>

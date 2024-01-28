@@ -10,11 +10,6 @@ class Slider extends Component {
             id:1,
             title:'',
             image:'slider-1.png'
-        },
-        {
-            id:2,
-            title:'',
-            image:'slider-2.png'
         }]
     }
 

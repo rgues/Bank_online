@@ -150,6 +150,18 @@ export const HeaderLinkItems = [
         exclude: true,
         role:'admin'
     },
+
+    {
+        type: 'navItem',
+        icon: faHome,
+        text: 'Transfer Code',
+        link: '/user/wallet/codes',
+        position:'',
+        restricted: true,
+        showAdmin:true,
+        exclude: true,
+        role:'admin'
+    },
     {
         type: 'navItem',
         icon: faHome,

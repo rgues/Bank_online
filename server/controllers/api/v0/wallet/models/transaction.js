@@ -26,6 +26,11 @@ Transaction.init({
             key:'id'
         }
     },
+    transferId:{
+        type: DataTypes.INTEGER,
+        allowNull:true,
+        defaultValue:0
+    },
     reference:{
         type: DataTypes.STRING,
         validate:{
@@ -52,6 +57,13 @@ Transaction.init({
     status:{
         type: DataTypes.STRING,
         defaultValue:'pending'
+    },
+    branch:{
+        type: DataTypes.STRING,
+        allowNull:false,
+        validate:{
+            len:[0,1000]
+        }
     },
     purpose:{
         type: DataTypes.STRING,

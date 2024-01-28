@@ -51,7 +51,7 @@ const BorrowFromUs = () => {
 
                     <div className='borrow-card-body'>
                         <p>
-                            Contact us, we are always available for you, wheter a query or suggestion.
+                            Contact us, we are always available for you, whether a query or suggestion.
                         </p>
                     </div>
                 </div>

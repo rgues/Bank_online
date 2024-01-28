@@ -2,11 +2,13 @@
 const { admin } = require("../../../../../middleware/admin");
 const { auth } = require("../../../../../middleware/auth");
 const { manager } = require("../../../../../middleware/manager");
-const { walletFormValidator } = require("../../../../../validator/wallet_validator");
+const { walletFormValidator, transferFormValidators, transferFormValidator } = require("../../../../../validator/wallet_validator");
 const { Currency } = require("../models/currency");
 const { Payment } = require("../models/payment");
 const { Transaction } = require("../models/transaction");
 const { Wallet } = require("../models/wallet");
+const { Code } = require("../models/code");
+const { Transfer } = require("../models/transfer");
 
 
 module.exports = function (app) {
@@ -20,7 +22,6 @@ module.exports = function (app) {
             res.status(200).send(currencies);
 
         } catch (err) {
-            console.log(err);
             res.status(400).send(err);
         }
     });
@@ -36,10 +37,153 @@ module.exports = function (app) {
                 currency
             });
         } catch (err) {
-            console.log(err);
             res.status(400).send(err);
         }
 
+    });
+
+    /* Code Transfert */
+
+        /* Get code */
+        app.get('/api/wallet/codes', async (req, res) => {
+            // /api/users?order=ASC&skip=value&limit=value
+            let order = req.query.order;
+            let skip = parseInt(req.query.skip);
+            let limit = parseInt(req.query.limit);
+
+            try {
+                const codes = await Code.findAll({
+                where: { 
+                    active: 1
+                },
+                order: [['id', order]] ,
+                offset: skip,
+                limit: limit
+            });
+
+                const nbCodes = Code.count();
+
+                res.status(200).send({codes: codes, nbCodes: codes.length});
+    
+            } catch (err) {
+                res.status(400).send(err);
+            }
+        });
+
+            
+        // auth, admin 
+        app.post('/api/wallet/code', auth, manager, async (req, res) => {
+    
+            try {
+                const code = await Code.create(req.body);
+                res.status(200).json({
+                    success: true,
+                    code
+                });
+            } catch (err) {
+                res.status(400).send(err);
+            }
+    
+        });
+
+            // updated code
+            app.get('/api/wallet/code/update', auth, manager, async (req, res) => {
+    
+                try {
+                    let id = req.query.id;
+                    const code = await Code.findByPk(id);
+
+                    if (code instanceof Code) {
+                        code.set({active: 0});
+                        await code.save();
+                        await code.reload();
+                        res.status(200).json({success:true, code:code});
+                    } else {
+                        res.status(200).json({success:false, message:'Code does not exist.'});
+                    }
+            
+                } catch (err) {
+                    res.status(400).send(err);
+                }
+        
+            });
+
+        // disable and delete code
+        app.get('/api/wallet/code/archive', auth, manager, async (req, res) => {
+    
+            try {
+                let id = req.query.id;
+                const code = await Code.findByPk(id);
+        
+                code.set({active: 0});
+        
+                await code.save();
+                await code.reload();
+
+                res.status(200).send({code:code, success:true});
+            } catch (err) {
+                res.status(400).send(err);
+            }
+    
+        });
+
+          /* Get code */
+          app.get('/api/wallet/checkcode', auth, async (req, res) => {
+            // /api/wallet/checkcode?codeTransfer=value&codeReference=value&currency=value
+            let codeTransfer = req.query.codeTransfer;
+            let codeReference = req.query.codeReference;
+            let currency = req.query.currency;
+            let amount = req.query.amountInFigure;
+            try {
+                const code = await Code.findOne({
+                where: { 
+                    active: 1, 
+                    codeTransfer: codeTransfer, 
+                    codeReference:codeReference, 
+                    currency: currency 
+                } });
+
+                if (code) {
+
+                    if ( parseFloat(amount) <= parseFloat(code.amountLimit)) {
+                        res.status(200).send({success: true, valid_code: true, valid_amount: true, code});
+                    } else {
+                        res.status(200).send({success: false, valid_code: true, valid_amount: false, code});
+                    }
+                   
+                } else {
+                    res.status(200).send({success: false, valid_code: false, valid_amount: false, code});
+                }
+    
+            } catch (err) {
+                res.status(400).send(err);
+            }
+        });
+
+       /* Transfert routes */
+
+       // save transfert
+       app.post('/api/wallet/transfer', auth, transferFormValidator, async (req, res) => {
+        try {
+            const transfer = await Transfer.create(req.body);
+            res.status(200).json({ success: true, transfer });
+        } catch (err) {
+            res.status(400).send(err);
+        }
+      });
+
+    app.get('/api/wallet/transfer/archive', auth, async (req, res) => {
+    
+        try {
+            let id = req.query.id;
+            const transfer = await Transfer.findByPk(id);
+            transfer.set({archive: 1});
+            await transfer.save();
+            await transfer.reload();
+
+        } catch (err) {
+            res.status(400).send(err);
+        }
     });
 
     /* payment routes */
@@ -51,7 +195,6 @@ module.exports = function (app) {
             res.status(200).send(payment);
 
         } catch (err) {
-            console.log(err);
             res.status(400).send(err);
         }
     });
@@ -66,7 +209,6 @@ module.exports = function (app) {
                 payment
             });
         } catch (err) {
-            console.log(err);
             res.status(400).send(err);
         }
 
@@ -110,6 +252,7 @@ module.exports = function (app) {
                 const params = {
                     ...req.body,
                     status: 'pending',
+                    transferId: 0,
                     fees_paid: fees,
                     fees_type: payment.fees_type,
                     amount_paid: userAmountPaid,
@@ -144,22 +287,99 @@ module.exports = function (app) {
 
                 } catch (err) {
                     // failed to credit delete the transaction
-                    console.log(err);
+                    
                     await transaction.destroy({ force: true });
                     return res.status(400).send(err);
                 }
             } catch (err) {
-                console.log(err);
+                
                 return res.status(400).send(err);
             }
 
         } catch (err) {
-            console.log(err);
+          
             return res.status(400).send(err);
         }
 
     });
 
+      // Debit user wallet after transfer is done
+      app.post('/api/wallet/dedit', transferFormValidator, auth, admin, async (req, res) => {
+
+        try {
+
+            const payment = await Payment.findOne();
+
+            // save the transfert
+            const transferData = {
+                ...req.body,
+                message:req.body.purpose
+            }
+
+            const transfer = await Transfer.create(transferData);
+
+            try {
+
+                const params = {
+                    paymentId: payment.id,
+                    userId:req.body.userId,
+                    tellerId: req.body.userId,
+                    transferId: transfer.id,
+                    type:'debit',
+                    status: 'pending',
+                    purpose:req.body.purpose,
+                    remark:`Transfer to Domestical Account with following information,  Bank Name: ${req.body.bankName}, Account Name :  ${req.body.accountHolder} and Account Number :  ${req.body.accountNumber} `,
+                    receiver_message:`${req.body.amountInFigure} ${req.body.currency} has been debited from your account.`,
+                    amount_paid: parseFloat(req.body.amountInFigure),
+                    amount_wallet: parseFloat(req.body.amountInFigure),
+                    currency_wallet:req.body.currencyId,
+                    currency_paid:req.body.currencyId,
+                    transaction_date: req.body.transaction_date
+                };
+
+
+                const transaction = await Transaction.create(params);
+
+                try {
+
+                    const data = {
+                        status: transaction.status,
+                        amount: transaction.amount_wallet,
+                        currencyId: transaction.currency_wallet,
+                        userId: transaction.userId,
+                        reference: transaction.reference,
+                        balance: 0,
+                        transaction_date: transaction.transaction_date,
+                        transactionId: transaction.id,
+                        message: transaction.receiver_message,
+                        transaction_type: transaction.type,
+                        confirm: 0
+                    };
+
+                    const wallet = await Wallet.create(data);
+                    // construct response with new balance for each currency
+                    return res.status(200).json({
+                        success: true,
+                        wallet: wallet
+                    });
+
+                } catch (err) {
+                    // failed to credit delete the transaction
+                    console.log(err);
+                    await transaction.destroy({ force: true });
+                    return res.status(400).send(err);
+                }
+            } catch (err) {
+             
+                return res.status(400).send(err);
+            }
+
+        } catch (err) {
+        
+            return res.status(400).send(err);
+        }
+
+    });
 
     // Get the user wallet transaction
     app.get('/api/wallet/transaction', auth, async (req, res) => {
@@ -182,7 +402,7 @@ module.exports = function (app) {
             res.status(200).json({ transaction, nbtrans });
 
         } catch (err) {
-            console.log(err);
+           
             res.status(400).send(err);
         }
     });
@@ -226,7 +446,7 @@ module.exports = function (app) {
             res.status(200).json({ transaction, nbtrans });
 
         } catch (err) {
-            console.log(err);
+         
             res.status(400).send(err);
         }
     });
@@ -280,13 +500,11 @@ module.exports = function (app) {
 
             res.status(200).json({ success: true, transaction });
         } catch (err) {
-            console.log(err);
+        
             res.status(400).send(err);
         }
     });
 
-
-    
     app.get('/api/transaction/archive', auth, admin, async (req, res) => {
         // /api/transaction/confirm?id=64e0bc5bd3a9bc810be1f80c
         try {
@@ -312,7 +530,7 @@ module.exports = function (app) {
 
             res.status(200).json({ success: true, transaction });
         } catch (err) {
-            console.log(err);
+        
             res.status(400).send(err);
         }
     });
@@ -337,7 +555,7 @@ module.exports = function (app) {
             res.status(200).json({ success: true, wallet: { currency, balance: 0 } });
 
         } catch (err) {
-            console.log(err);
+            
             res.status(400).send(err);
         }
     });
@@ -358,19 +576,15 @@ module.exports = function (app) {
                         order: [['updatedAt', 'DESC']],
                         limit: 1
                     });
-                    response.push({ currency: currency.code, balance: wallet.length ? wallet[0].balance : 0 });
+                    response.push({ currency: currency.code, currencyId: currency.id, balance: wallet.length ? wallet[0].balance : 0 });
                 }
                 res.status(200).json({ success: true, wallet: response });
 
             } catch (err) {
-                console.log('Failed to get balance');
-                console.log(err);
                 res.status(400).send(err);
             }
 
         } catch (err) {
-            console.log('Failed to get currencies');
-            console.log(err);
             res.status(400).send(err);
         }
     });
